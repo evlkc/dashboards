@@ -3,6 +3,9 @@ import streamlit as st
 st.page_link("pages/01_Finance__Dashboard.py", label="Open Finance →")
 st.page_link("pages/10_Flips__Search.py", label="Open Flips →")
 st.page_link("pages/20_Autos__Search.py", label="Open Autos →")
+st.page_link("pages/02_Finance__Single_Ticker.py", label="Single Ticker →")
+st.page_link("pages/03_Finance__Scanner.py", label="Scanner →")
+
 
 
 st.set_page_config(page_title="Ed's Dashboards", layout="wide")
