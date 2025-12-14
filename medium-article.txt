@@ -1,0 +1,72 @@
+Title: Summary & Implementation Notes – "I’ve Averaged 30% A Year In The Stock Market For A Decade With This One Simple Change" (Zaheer Anwari)
+
+Source:
+- Medium: DataDrivenInvestor
+- Author: Zaheer Anwari
+- URL: https://medium.datadriveninvestor.com/ive-averaged-30-a-year-in-the-stock-market-for-a-decade-with-this-one-simple-change-9207d40076fb
+
+Goal of this document:
+- Capture the core ideas from Zaheer’s article in my own words.
+- Act as a design/requirements file for the “Zaheer model” inside the finance-dashboard project.
+- Used by the ChatGPT VS Code extension as context when modifying app.py / scan.py / core modules.
+
+High-level idea:
+- Most traders underperform not because of lack of intelligence, but because they:
+  - Chase day trading and noise.
+  - Follow bad strategies and misinformation.
+- The “one simple change” is a *shift to a systematic trend-following / position-trading approach* focused on:
+  - Strong trending stocks.
+  - New highs.
+  - Shallow consolidations (bull flags).
+  - Compounding winners and cutting losers quickly.
+
+Zaheer’s process (reconstructed):
+
+1) Step 1 – Shortlist stocks setting record highs
+   - Start from a broad universe (major indices, e.g. S&P 500, Nasdaq-100, etc.).
+   - Filter to stocks that are at or near:
+     - All-time highs or
+     - New 52-week highs (depending on timeframe).
+   - Avoid “cheap” or beaten-down stocks; focus on leaders.
+   - This is the first edge: only deal with relative strength / leaders, not laggards.
+
+   Implementation notes:
+   - In code, this is “breakout above prior high” logic:
+     - Lookback window (e.g. 6–12 months or more).
+     - Require close > max(close over lookback) * (1 + small buffer).
+   - Our app already has: identify_breakouts(df, breakout_lookback, breakout_buffer_pct).
+   - For the scanner, we build universes per index (sp500.txt, nasdaq100.txt, etc.) and check each ticker.
+
+2) Step 2 – Require a strong prior uptrend
+   - Before the breakout, the stock should have been in a strong uptrend for 12–18+ months.
+   - Big prior percentage gain over that trend window (e.g. 100%+).
+   - This filters out:
+     - Random spikes.
+     - Weak or choppy names.
+
+   Implementation notes:
+   - We approximate “strong prior trend” using:
+     - A lookback in months (min_trend_months).
+     - A minimum % return over that lookback (min_trend_return_pct).
+   - In code, we have compute_strong_trend_mask(df, min_trend_months, min_trend_return_pct).
+   - This produces a boolean mask that is true only when the prior 12–18+ months show a large positive return.
+
+3) Step 3 – Wait for a consolidation (bull flag / base)
+   - After a strong trend, price often pauses:
+     - Sideways or gently down.
+     - Volatility compresses.
+   - The consolidation should:
+     - Last for at least a few months (for “big picture” swing trades).
+     - Not be too deep (shallow pullback compared to the trend).
+   - This is where the “bull flag” or base forms. We are looking for “rest, not collapse”.
+
+   Implementation notes:
+   - Our model has two separate but related ideas:
+     A) Consolidation filter:
+        - min_consol_months (how long the range lasts).
+        - max_consol_height_pct (max height of the range in % terms).
+        - Code: compute_consolidation_mask(df, min_consol_months, max_consol_height_pct).
+     B) Bull flag specifics around breakout:
+        - After the breakout, we track the next N days to form a short-term flag.
+        - We limit max pullback from breakout close (max_flag_pullback_pct).
+        - Require

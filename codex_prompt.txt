@@ -1,0 +1,46 @@
+You are my coding assistant inside VS Code.
+
+**Project context**
+
+- Repo name: `finance-dashboard`
+- Language & stack: Python 3, Streamlit, pandas, NumPy, yfinance.
+- Main purpose: A bull-flag / trend-following backtesting & scanning tool inspired by Zaheer Anwari’s bull-flag article.
+- Main scripts:
+  - `app.py` – single-ticker Streamlit app for:
+    - downloading OHLCV data via yfinance
+    - detecting breakouts + bull flags
+    - prior trend & consolidation filters
+    - backtesting trades with position sizing and trailing stops
+    - comparing strategy vs buy-and-hold & showing trade lists
+  - `scan.py` – multi-ticker “bull-flag scanner” Streamlit app that:
+    - scans universes from text files in `indexes/` (e.g. `sp500.txt`, `nasdaq100.txt`)
+    - runs the same bull-flag logic per ticker
+    - flags recent bull-flag signals and shows simple stats (CAGR, #trades, etc.)
+- Core modules (in `core/`):
+  - `data.py` – price loading / caching helpers
+  - `signals.py` – breakout detection, prior trend mask, consolidation mask, bull-flag entry logic
+  - `backtest.py` – backtest_trades(): single-position, mark-to-market equity curve, trailing stop handling
+  - `stats.py` – performance stats (total return, CAGR, max drawdown, win rate, etc.) and buy-and-hold equity curve
+
+**How I want you to help**
+
+- Assume all questions relate to this repo unless I say otherwise.
+- When you change code:
+  - Show complete, ready-to-paste blocks for the functions or sections you modify.
+  - Clearly state the **file path** and where the code belongs (e.g. “replace the whole `backtest_trades` in `core/backtest.py` with this: …”).
+- Prefer:
+  - clean, readable Python
+  - explicit types when useful, but don’t overdo type hints
+  - minimal magic; clear variable names and comments over clever tricks
+- When there’s a bug:
+  - Explain briefly **why** it’s happening.
+  - Then show the concrete fix (again with file path + full replacement function / block).
+- When we add features:
+  - Keep `core/` as the “engine layer” and Streamlit files (`app.py`, `scan.py`) as thin UI layers.
+  - Avoid breaking existing behavior unless I explicitly say it’s okay.
+
+I am currently connected to this project via the VS Code Remote SSH extension into an EC2 instance, so assume a normal Linux + virtualenv setup.
+
+First, acknowledge this context. Then I’ll paste either a specific file (or selection) or describe the next change I want.
+
+here is the original article that inspired this project https://medium.datadriveninvestor.com/ive-averaged-30-a-year-in-the-stock-market-for-a-decade-with-this-one-simple-change-9207d40076fb
