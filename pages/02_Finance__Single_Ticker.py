@@ -1,4 +1,5 @@
-import app as single_app
+import streamlit as st
 
-# Reuse the single-ticker Streamlit UI
-single_app.main()
+st.set_page_config(page_title="Finance — Single Ticker", layout="wide")
+st.title("📈 Finance — Single Ticker")
+st.info("TODO: Port single-ticker logic into this page (remove old import app pattern).")
